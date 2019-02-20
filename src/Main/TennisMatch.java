@@ -29,18 +29,20 @@ public class TennisMatch {
         setManager.winPts(player);
     }
 
-    public int curretnSetNumber(){
+    public int currentSetNumber(){
         return 0;
     }
 
-    public int gamesInSetForPlyer(int setNumber,Player player){
-        return 0;
+    public int gamesInSetForPlayer(int setNumber,Player player){
+      return player.getWinnedGamesInSets(setNumber);
     }
 
-
+    public int getEndedSet(){
+        return player1.getGameInSet().size();
+    }
 
     public int gamesInCurrentSetForPlayer(Player player){
-        return player.getWinnedGamesInSets();
+        return player.getGameWinned();
     }
 
     public boolean isFinnished(){
