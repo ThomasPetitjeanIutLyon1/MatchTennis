@@ -24,12 +24,14 @@ public class TennisMatch {
     }
 
     public void updateWithPointWonBy(Player player){
-        if (player1.getGameInSet().size() != matchType.numberOfSetsToWin()){
+
+
+
             setManager.winPts(player);
-        }
-        else {
-            this.isGameFinnished = true;
-        }
+
+
+            this.isGameFinnished = this.gameIsItFinnished();
+
 
     }
 
@@ -50,10 +52,25 @@ public class TennisMatch {
     }
 
     public boolean isFinnished(){
-        return getIsGameFinnished();
+        return this.isGameFinnished;
     }
 
-    private boolean getIsGameFinnished() {
-        return isGameFinnished;
+    private boolean gameIsItFinnished() {
+        int nbOfSetToWin;
+        switch (matchType){
+            case BEST_OF_THREE:
+                nbOfSetToWin = 3;
+                break;
+            case BEST_OF_FIVE:
+                nbOfSetToWin = 5;
+                break;
+            default:
+                nbOfSetToWin = 0;
+        }
+
+        if (player1.getGameInSet().size() == nbOfSetToWin){
+            return true;
+        }
+        return false;
     }
 }

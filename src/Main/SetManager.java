@@ -107,10 +107,28 @@ public class SetManager {
             }
         }
         else {
-            if (winPlayer.getGameWinned() >= loosePlayer.getGameWinned()+2 && winPlayer.getGameWinned() >= 6){
-                winPlayer.endSet();
-                loosePlayer.endSet();
-                return true;
+            if (winPlayer.getGameInSet().size() == matchType.numberOfSetsToWin()){
+                if (winPlayer.getGameWinned() >= loosePlayer.getGameWinned()+2 && winPlayer.getGameWinned() >= 6){
+                    winPlayer.endSet();
+                    loosePlayer.endSet();
+                    return true;
+                }
+            }
+            else {
+                if (winPlayer.getGameWinned() == 6 && loosePlayer.getGameWinned() <= 4){
+                    winPlayer.endSet();
+                    loosePlayer.endSet();
+                    return true;
+                }
+                else if (winPlayer.getGameWinned() == 7 && loosePlayer.getGameWinned() <= 5){
+                    winPlayer.endSet();
+                    loosePlayer.endSet();
+                    return true;
+                }
+                else if (winPlayer.getGameWinned() == loosePlayer.getGameWinned() && loosePlayer.getGameWinned() == 6){
+                    this.isTieBreak = true;
+                    return false;
+                }
             }
         }
         return false;
