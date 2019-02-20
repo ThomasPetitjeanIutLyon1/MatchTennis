@@ -5,18 +5,20 @@ public class SetManager {
     private Player player1;
     private Player player2;
     private boolean tieBreakInLastSet;
-
+    private boolean isTieBreak;
+    MatchType matchType;
 
 
     private ArrayList<String> pts = new ArrayList<>();
     private ArrayList<Player> winnedSet = new ArrayList<>();
 
 
-    public SetManager(Player player1, Player player2, boolean tieBreakInLastSet) {
+    public SetManager(Player player1, Player player2, boolean tieBreakInLastSet,MatchType matchType) {
         this.player1 = player1;
         this.player2 = player2;
         this.tieBreakInLastSet = tieBreakInLastSet;
-
+        this.isTieBreak = false;
+        this.matchType = matchType;
         initPts();
     }
 
@@ -31,21 +33,42 @@ public class SetManager {
     public void winPts(Player player){
         Player winPlayer = player;
         Player loosePlayer = getLooser(winPlayer);
+        if (!isTieBreak){
+            if (!isGameWinned(winPlayer,loosePlayer)){
+                if (findScore(winPlayer.getPoints()) < 3 && findScore(loosePlayer.getPoints()) != 4){
+                    winPlayer.setPoints(pts.get(findScore(winPlayer.getPoints())+1));
+                }
+                else if (findScore(winPlayer.getPoints()) == findScore(loosePlayer.getPoints()) && findScore(winPlayer.getPoints()) == 3){
+                    winPlayer.setPoints("A");
+                }
+                else if (findScore(loosePlayer.getPoints()) == 4){
+                    loosePlayer.setPoints("40");
+                    winPlayer.setPoints("A");
+                }
+            }
+        }
+        else {
+            if(!isTieBreakWinned(winPlayer,loosePlayer)){
+                winPlayer.setTieBreakPts(winPlayer.getTieBreakPts()+1);
+            }
 
-        if (!isGameWinned(winPlayer,loosePlayer)){
-            if (findScore(winPlayer.getPoints()) < 3 && findScore(loosePlayer.getPoints()) != 4){
-                winPlayer.setPoints(pts.get(findScore(winPlayer.getPoints())+1));
-            }
-            else if (findScore(winPlayer.getPoints()) == findScore(loosePlayer.getPoints()) && findScore(winPlayer.getPoints()) == 3){
-                winPlayer.setPoints("A");
-            }
-            else if (findScore(loosePlayer.getPoints()) == 4){
-                loosePlayer.setPoints("40");
-                winPlayer.setPoints("A");
-            }
         }
 
 
+
+    }
+
+    private boolean isTieBreakWinned(Player winPlayer, Player loosePlayer){
+
+        if (winPlayer.getTieBreakPts()+1 >= loosePlayer.getTieBreakPts()+2 && winPlayer.getTieBreakPts()+1 >= 7){
+            winPlayer.endSet();
+            loosePlayer.endSet();
+            this.isTieBreak = false;
+
+            return true;
+        }
+
+        return false;
     }
 
     private boolean isGameWinned(Player winPlayer, Player loosePlayer){
@@ -79,7 +102,7 @@ public class SetManager {
                 return true;
             }
             else if (winPlayer.getGameWinned() == loosePlayer.getGameWinned() && loosePlayer.getGameWinned() == 6){
-                int tiebreak = 1;
+                this.isTieBreak = true;
                 return false;
             }
         }

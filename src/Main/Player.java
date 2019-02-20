@@ -4,6 +4,7 @@ public class Player {
     private  String name;
     private TennisSet tennisSet;
     private String points;
+    private int tieBreakPts;
     private int gameWinned;
     private ArrayList<Integer> gameInSet = new ArrayList<>();
 
@@ -15,10 +16,7 @@ public class Player {
         this.tennisSet = new TennisSet();
         this.name = name;
         this.points = "0";
-    }
-
-    public void winPoint(){
-
+        this.tieBreakPts = 0;
     }
 
     public String getPoints(){
@@ -27,6 +25,9 @@ public class Player {
 
     public void endSet(){
         gameInSet.add(gameWinned);
+        this.points = "0";
+        this.gameWinned = 0;
+        this.tieBreakPts = 0;
     }
 
     public int getWinnedGamesInSets(int setNb){
@@ -58,7 +59,11 @@ public class Player {
         return gameInSet;
     }
 
-    public void setGameInSet(ArrayList<Integer> gameInSet) {
-        this.gameInSet = gameInSet;
+    public int getTieBreakPts() {
+        return tieBreakPts;
+    }
+
+    public void setTieBreakPts(int tieBreakPts) {
+        this.tieBreakPts = tieBreakPts;
     }
 }

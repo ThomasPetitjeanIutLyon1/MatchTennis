@@ -1,9 +1,23 @@
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 public class TennisMatchTest {
+    @Test
+    public void Basics() {
+        Player player1 = new Player("Roberto");
+        Player player2 = new Player("Theo");
+        TennisMatch tennisMatch = new TennisMatch(player1,player2, MatchType.BEST_OF_THREE, true);
+        assertEquals("getName","Roberto",player1.getName());
+        player1.setName("Thomas");
+        assertEquals("setName","Thomas",player1.getName());
+        assertEquals("getWinnedGameInSet",0,tennisMatch.gamesInSetForPlayer(0,player1));
+
+        assertEquals("getWinnedGameInSet",0,player1.getWinnedGamesInSets(0));
+        assertEquals("currentSetNumber",1,tennisMatch.currentSetNumber());
+
+    }
+
     @Test
     public void StartTennisMatch() {
         Player player1 = new Player("Roberto");
@@ -25,18 +39,18 @@ public class TennisMatchTest {
         assertEquals("Pts","0",tennisMatch.pointsForPlayer(player1));
         assertEquals("Pts","0",tennisMatch.pointsForPlayer(player2));
 
-        tennisMatch.playerWinPoint(player1);
+        tennisMatch.updateWithPointWonBy(player1);
         assertEquals("Pts","15",tennisMatch.pointsForPlayer(player1));
-        tennisMatch.playerWinPoint(player1);
+        tennisMatch.updateWithPointWonBy(player1);
         assertEquals("Pts","30",tennisMatch.pointsForPlayer(player1));
-        tennisMatch.playerWinPoint(player1);
+        tennisMatch.updateWithPointWonBy(player1);
         assertEquals("Pts","40",tennisMatch.pointsForPlayer(player1));
 
-        tennisMatch.playerWinPoint(player2);
+        tennisMatch.updateWithPointWonBy(player2);
         assertEquals("Pts","15",tennisMatch.pointsForPlayer(player2));
-        tennisMatch.playerWinPoint(player2);
+        tennisMatch.updateWithPointWonBy(player2);
         assertEquals("Pts","30",tennisMatch.pointsForPlayer(player2));
-        tennisMatch.playerWinPoint(player2);
+        tennisMatch.updateWithPointWonBy(player2);
         assertEquals("Pts","40",tennisMatch.pointsForPlayer(player2));
     }
 
@@ -48,20 +62,20 @@ public class TennisMatchTest {
         assertEquals("Pts","0",tennisMatch.pointsForPlayer(player1));
         assertEquals("Pts","0",tennisMatch.pointsForPlayer(player2));
 
-        tennisMatch.playerWinPoint(player1);
-        tennisMatch.playerWinPoint(player1);
-        tennisMatch.playerWinPoint(player1);
+        tennisMatch.updateWithPointWonBy(player1);
+        tennisMatch.updateWithPointWonBy(player1);
+        tennisMatch.updateWithPointWonBy(player1);
 
 
-        tennisMatch.playerWinPoint(player2);
-        tennisMatch.playerWinPoint(player2);
-        tennisMatch.playerWinPoint(player2);
+        tennisMatch.updateWithPointWonBy(player2);
+        tennisMatch.updateWithPointWonBy(player2);
+        tennisMatch.updateWithPointWonBy(player2);
 
-        tennisMatch.playerWinPoint(player1);
+        tennisMatch.updateWithPointWonBy(player1);
         assertEquals("Advge","A",tennisMatch.pointsForPlayer(player1));
         assertEquals("Advge","40",tennisMatch.pointsForPlayer(player2));
 
-        tennisMatch.playerWinPoint(player2);
+        tennisMatch.updateWithPointWonBy(player2);
         assertEquals("Advge","40",tennisMatch.pointsForPlayer(player1));
         assertEquals("Advge","A",tennisMatch.pointsForPlayer(player2));
 
@@ -75,34 +89,118 @@ public class TennisMatchTest {
         assertEquals("Pts","0",tennisMatch.pointsForPlayer(player1));
         assertEquals("Pts","0",tennisMatch.pointsForPlayer(player2));
 
-        tennisMatch.playerWinPoint(player1);
-        tennisMatch.playerWinPoint(player1);
-        tennisMatch.playerWinPoint(player1);
+        tennisMatch.updateWithPointWonBy(player1);
+        tennisMatch.updateWithPointWonBy(player1);
+        tennisMatch.updateWithPointWonBy(player1);
 
 
-        tennisMatch.playerWinPoint(player1);
+        tennisMatch.updateWithPointWonBy(player1);
         assertEquals("GameWinned",1,tennisMatch.gamesInCurrentSetForPlayer(player1));
 
         //test si les points recommencent correctement
-        tennisMatch.playerWinPoint(player1);
+        tennisMatch.updateWithPointWonBy(player1);
         assertEquals("Pts","15",tennisMatch.pointsForPlayer(player1));
-        tennisMatch.playerWinPoint(player1);
+        tennisMatch.updateWithPointWonBy(player1);
         assertEquals("Pts","30",tennisMatch.pointsForPlayer(player1));
-        tennisMatch.playerWinPoint(player1);
+        tennisMatch.updateWithPointWonBy(player1);
         assertEquals("Pts","40",tennisMatch.pointsForPlayer(player1));
-        tennisMatch.playerWinPoint(player1);
+        tennisMatch.updateWithPointWonBy(player1);
         assertEquals("GameWinned",2,tennisMatch.gamesInCurrentSetForPlayer(player1));
 
     }
 
     @Test
-    public void PlayerSetWinNoTBSimple() {
+    public void PlayerSetWinNoTB() {
+        Player player1 = new Player("Roberto");
+        Player player2 = new Player("Theo");
+        TennisMatch tennisMatch = new TennisMatch(player1,player2, MatchType.BEST_OF_THREE, false);
+       for (int i = 0;i<4*6;i++){
+           tennisMatch.updateWithPointWonBy(player1);
+       }
+       assertEquals("SetWinned",1,tennisMatch.getEndedSet());
+       assertEquals("currentSetNumber",2,tennisMatch.currentSetNumber());
+       assertEquals("getWinnedGameInSet",6,player1.getWinnedGamesInSets(0));
+        for (int i = 0;i<4*7;i++){
+            tennisMatch.updateWithPointWonBy(player1);
+        }
+        for (int i = 0;i<4*5;i++){
+            tennisMatch.updateWithPointWonBy(player2);
+        }
+        assertEquals("SetWinned",2,tennisMatch.getEndedSet());
+    }
+
+    @Test
+    public void PlayerSetWinTB() {
         Player player1 = new Player("Roberto");
         Player player2 = new Player("Theo");
         TennisMatch tennisMatch = new TennisMatch(player1,player2, MatchType.BEST_OF_THREE, true);
-       for (int i = 0;i<4*6;i++){
-           tennisMatch.playerWinPoint(player1);
-       }
-       assertEquals("SetWinned",1,tennisMatch.getEndedSet());
+        for (int i = 0;i<4*6;i++){
+            tennisMatch.updateWithPointWonBy(player1);
+        }
+        assertEquals("SetWinned",1,tennisMatch.getEndedSet());
+
+        for (int i = 0;i<4*5;i++){
+            tennisMatch.updateWithPointWonBy(player1);
+        }
+        for (int i = 0;i<4*7;i++){
+            tennisMatch.updateWithPointWonBy(player2);
+        }
+        assertEquals("SetWinned",2,tennisMatch.getEndedSet());
+
+    }
+
+    @Test
+    public void PlayerSetWinUseTB() {
+        Player player1 = new Player("Roberto");
+        Player player2 = new Player("Theo");
+        TennisMatch tennisMatch = new TennisMatch(player1,player2, MatchType.BEST_OF_THREE, true);
+
+        // 1er set tie break 7 - 0
+        for (int i = 0;i<4*5;i++){
+            tennisMatch.updateWithPointWonBy(player1);
+        }
+        for (int i = 0;i<4*6;i++){
+            tennisMatch.updateWithPointWonBy(player2);
+        }
+        assertEquals("SetWinned",0,tennisMatch.getEndedSet());
+
+        for (int i = 0;i<4*1;i++){
+            tennisMatch.updateWithPointWonBy(player1);
+        }
+
+        assertEquals("SetWinned",0,tennisMatch.getEndedSet());
+
+        for (int i = 0;i<7;i++){
+            tennisMatch.updateWithPointWonBy(player1);
+        }
+        assertEquals("SetWinned",1,tennisMatch.getEndedSet());
+
+        //2 eme set avec tie break 9-7
+
+        for (int i = 0;i<4*5;i++){
+            tennisMatch.updateWithPointWonBy(player1);
+        }
+        for (int i = 0;i<4*6;i++){
+            tennisMatch.updateWithPointWonBy(player2);
+        }
+        assertEquals("SetWinned1",1,tennisMatch.getEndedSet());
+
+        for (int i = 0;i<4*1;i++){
+            tennisMatch.updateWithPointWonBy(player1);
+        }
+
+        assertEquals("SetWinned2",1,tennisMatch.getEndedSet());
+
+        for (int i = 0;i<6;i++){
+            tennisMatch.updateWithPointWonBy(player1);
+        }
+        for (int i = 0;i<7;i++){
+            tennisMatch.updateWithPointWonBy(player2);
+        }
+        assertEquals("SetWinned3",1,tennisMatch.getEndedSet());
+        for (int i = 0;i<3;i++){
+            tennisMatch.updateWithPointWonBy(player1);
+        }
+        assertEquals("SetWinned4",2,tennisMatch.getEndedSet());
     }
 }

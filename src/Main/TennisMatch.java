@@ -14,23 +14,27 @@ public class TennisMatch {
         this.isGameFinnished = false;
         this.matchType = matchType;
         this.tieBreakInLastSet = tieBreakInLastSet;
-        setManager = new SetManager(this.player1,this.player2,this.tieBreakInLastSet);
+        setManager = new SetManager(this.player1,this.player2,this.tieBreakInLastSet,matchType);
     }
 
-    public void updateWithPointWonBy(Player player){
 
-    }
 
     public String pointsForPlayer(Player player){
         return player.getPoints();
     }
 
-    public void playerWinPoint(Player player){
-        setManager.winPts(player);
+    public void updateWithPointWonBy(Player player){
+        if (player1.getGameInSet().size() != matchType.numberOfSetsToWin()){
+            setManager.winPts(player);
+        }
+        else {
+            this.isGameFinnished = true;
+        }
+
     }
 
     public int currentSetNumber(){
-        return 0;
+        return player1.getGameInSet().size() + 1;
     }
 
     public int gamesInSetForPlayer(int setNumber,Player player){
